@@ -1,12 +1,15 @@
 module.exports = {
  users: [
-   {
-      username: "colin",
-      password: "password"
-   },
-   {
-      username: "dimeo",
-      password: "password"
-   }
+  { username: "peanut",
+    password: "butter"},
+
+  { username: "chicken",
+    password: "soup"},
+
+  { username: "grilled",
+    password: "cheese"},
+
+  { username: "country",
+    password: "ham"},
  ]
 }
