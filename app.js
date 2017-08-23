@@ -19,44 +19,51 @@ app.use(session({
  secret: 'dog person',
  resave: false,
  saveUninitalized: true,
- cookie: {maxAge: 60000}
+ // cookie: {maxAge: 60000}
 }));
 
+
 app.get('/', function(req, res, next){
-    res.render('userpage');
+  if (req.session.confirmLogin) {
+    res.render('userpage', {username: req.session.username});
+  } else {
+    res.redirect("/login");
+  }
 });
 
 app.get('/login', function(req, res){
-    res.render('login');
+    var error = req.session.error;
+    res.render('login', {error: error});
   });
 
   app.post('/login', function(req, res){
-    // let username = req.body.username;
+    // let username = req.session.username;
     // let password = req.body.password;
+    checkLogin(req, res);
+    if (req.session.confirmLogin) {
+      res.redirect('/');
+    } else {
+      req.session.error = "Login denied";
+      res.redirect("/login");
+    }
+    });
+
+function checkLogin (req, res) {
     data.users.find(function(user) {
       if (req.body.username===user.username && req.body.password===user.password) {
         console.log("login confirmed");
-        console.log('user');
-        res.redirect('/');
+        console.log(user);
+        req.session.confirmLogin = true;
+        req.session.username = req.body.username;
       } else {
           console.log("login denied");
-          res.redirect('/login');
-          }
-        })
-    });
-
-// app.post('/login', function(req, res){
-//   let username = req.body.username;
-//   let password = req.body.password;
-//   if (username && password) {
-//     console.log("password and username logged!");
-//     console.log("username: " + username + " password: " + password);
-//     res.redirect('/');
-//   } else {
-//     console.log("missing username or password");
-//     console.log("username: " + username + " password: " + password);
-//   }
-// });
+          // req.session.error = "Login denied";
+          // console.log(session);
+          // console.log(req.session.error);
+          // alert("login denied!");
+        }
+    }
+  )};
 
 app.listen(port, function(req, res){
    console.log('Starting top secret login app...');
